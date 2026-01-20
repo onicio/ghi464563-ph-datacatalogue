@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Health Data Catalog | GHI 463/563</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #0a0e27;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --accent-cyan: #00f2fe;
+            --accent-purple: #667eea;
+            --accent-pink: #f5576c;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-50px, 50px); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-100px) translateX(50px); }
+            50% { transform: translateY(-50px) translateX(-50px); }
+            75% { transform: translateY(-150px) translateX(100px); }
+        }
+
+        /* Header */
+        header {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+        }
+
+        .course-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .instructor-info {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            margin-top: 2rem;
+            animation: fadeInUp 1.4s ease-out;
+        }
+
+        /* Data Visualization Element */
+        .data-viz {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .data-circle {
+            position: absolute;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .data-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .data-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 1s;
+            border-color: var(--accent-pink);
+        }
+
+        .data-circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 10%;
+            left: 50%;
+            animation-delay: 2s;
+            border-color: var(--accent-purple);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            padding: 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .stat-card.visible {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 40px rgba(0, 242, 254, 0.2);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .section-header h2.visible {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Category Section */
+        .category-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .category-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .category-card.visible {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .category-card:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .category-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .resource-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(10px);
+        }
+
+        .resource-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-title a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .resource-title a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .resource-url {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .resource-url a {
+            color: var(--accent-purple);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .resource-url a:hover {
+            color: var(--accent-cyan);
+            text-decoration: underline;
+        }
+
+        .resource-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: var(--accent-gradient);
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 1rem 1rem 1rem 4rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput::placeholder {
+            color: var(--text-secondary);
+        }
+
+        #searchInput:focus {
+            border-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 0.5rem;
+        }
+
+        .clear-search.visible {
+            opacity: 1;
+        }
+
+        .clear-search:hover {
+            color: var(--accent-pink);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-right: 0.5rem;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            user-select: none;
+        }
+
+        .filter-chip:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+        }
+
+        .filter-chip.active {
+            background: var(--accent-gradient);
+            border-color: transparent;
+            color: white;
+            font-weight: 600;
+        }
+
+        .clear-filters {
+            padding: 0.5rem 1rem;
+            background: rgba(245, 87, 108, 0.2);
+            border: 1px solid var(--accent-pink);
+            border-radius: 20px;
+            color: var(--accent-pink);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            margin-left: auto;
+        }
+
+        .clear-filters:hover {
+            background: rgba(245, 87, 108, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Results Info */
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        .results-count {
+            font-family: 'Space Mono', monospace;
+            color: var(--accent-cyan);
+            font-size: 0.95rem;
+        }
+
+        .results-count span {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Hidden state for filtered items */
+        .category-card.hidden,
+        .resource-item.hidden {
+            display: none;
+        }
+
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            display: none;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .no-results h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .category-title {
+                font-size: 1.4rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-container">
+        <div class="search-wrapper">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search data sources, organizations, or diseases..."
+                    autocomplete="off"
+                />
+                <button class="clear-search" id="clearSearch" onclick="clearSearch()">✕</button>
+            </div>
+            
+            <div class="filter-section">
+                <span class="filter-label">FILTER BY:</span>
+                <button class="filter-chip" data-filter="global" onclick="toggleFilter(this)">Global Orgs</button>
+                <button class="filter-chip" data-filter="us-federal" onclick="toggleFilter(this)">US Federal</button>
+                <button class="filter-chip" data-filter="disease" onclick="toggleFilter(this)">Disease-Specific</button>
+                <button class="filter-chip" data-filter="surveillance" onclick="toggleFilter(this)">Surveillance</button>
+                <button class="filter-chip" data-filter="genomic" onclick="toggleFilter(this)">Genomic</button>
+                <button class="filter-chip" data-filter="api" onclick="toggleFilter(this)">APIs</button>
+                <button class="clear-filters" onclick="clearFilters()">Clear All Filters</button>
+            </div>
+
+            <div class="results-info" id="resultsInfo">
+                <div class="results-count">
+                    Showing <span id="resultsCount">91+</span> data sources
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="data-viz">
+            <div class="data-circle"></div>
+            <div class="data-circle"></div>
+            <div class="data-circle"></div>
+        </div>
+        
+        <div class="header-content">
+            <div class="course-badge">GHI 463/563 • MEZCOPH</div>
+            <h1>PUBLIC HEALTH<br>DATA CATALOG</h1>
+            <p class="subtitle">Foundations of Public Health Applications of Artificial Intelligence</p>
+            <p class="instructor-info">Instructor: Onicio B Leal Neto, PhD</p>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">91+</div>
+                <div class="stat-label">Data Sources</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">APIs Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Possibilities</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global/International Organizations -->
+    <section class="category-section">
+        <div class="section-header">
+            <h2>Global & International Organizations</h2>
+            <p>Comprehensive health data from worldwide health authorities and multilateral organizations</p>
+        </div>
+        
+        <div class="category-grid">
+            <div class="category-card" data-category="global">
+                <h3 class="category-title">
+                    <span class="category-icon">🌍</span>
+                    World Health Organization (WHO)
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.who.int/data/gho" target="_blank">Global Health Observatory (GHO)</a></h4>
+                    <div class="resource-url"><a href="https://www.who.int/data/gho" target="_blank">https://www.who.int/data/gho</a></div>
+                    <p class="resource-description">Comprehensive repository with over 1,000 health indicators across countries covering mortality, disease burden, health systems, risk factors, and more. Includes OData API for programmatic access.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://data.who.int/" target="_blank">WHO Data Portal</a></h4>
+                    <div class="resource-url"><a href="https://data.who.int/" target="_blank">https://data.who.int/</a></div>
+                    <p class="resource-description">Modernized interface for WHO's data with improved visualization and download capabilities. Covers global health statistics and SDG monitoring.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.who.int/publications/journals/weekly-epidemiological-record" target="_blank">Weekly Epidemiological Record</a></h4>
+                    <div class="resource-url"><a href="https://www.who.int/publications/journals/weekly-epidemiological-record" target="_blank">https://www.who.int/publications/journals/weekly-epidemiological-record</a></div>
+                    <p class="resource-description">WHO's primary vehicle for information on disease surveillance and outbreaks globally, published weekly since 1926.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="global">
+                <h3 class="category-title">
+                    <span class="category-icon">🇪🇺</span>
+                    European Centre for Disease Prevention and Control (ECDC)
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://atlas.ecdc.europa.eu/" target="_blank">Surveillance Atlas of Infectious Diseases</a></h4>
+                    <div class="resource-url"><a href="https://atlas.ecdc.europa.eu/" target="_blank">https://atlas.ecdc.europa.eu/</a></div>
+                    <p class="resource-description">Interactive visualization tool for infectious disease surveillance data across Europe. Includes time series, maps, and trend analysis for 52+ diseases.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.ecdc.europa.eu/en/publications-data" target="_blank">ECDC Data Downloads</a></h4>
+                    <div class="resource-url"><a href="https://www.ecdc.europa.eu/en/publications-data" target="_blank">https://www.ecdc.europa.eu/en/publications-data</a></div>
+                    <p class="resource-description">Downloadable datasets on infectious diseases including COVID-19, influenza, tuberculosis, HIV/AIDS, and antimicrobial resistance.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="global">
+                <h3 class="category-title">
+                    <span class="category-icon">🌎</span>
+                    Pan American Health Organization (PAHO)
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.paho.org/data/" target="_blank">Regional Health Observatory</a></h4>
+                    <div class="resource-url"><a href="https://www.paho.org/data/" target="_blank">https://www.paho.org/data/</a></div>
+                    <p class="resource-description">Health statistics and indicators for the Americas region, including disease surveillance and health system performance metrics.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www3.paho.org/data/" target="_blank">PLISA Health Information Platform</a></h4>
+                    <div class="resource-url"><a href="https://www3.paho.org/data/" target="_blank">https://www3.paho.org/data/</a></div>
+                    <p class="resource-description">Platform for Health Information in the Americas providing epidemiological data, health indicators, and outbreak information for Latin America and Caribbean countries.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="global">
+                <h3 class="category-title">
+                    <span class="category-icon">🏛️</span>
+                    United Nations & World Bank
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="http://data.un.org/" target="_blank">UN Data</a></h4>
+                    <div class="resource-url"><a href="http://data.un.org/" target="_blank">http://data.un.org/</a></div>
+                    <p class="resource-description">Statistical database aggregating data from multiple UN agencies covering demographics, health, education, and development indicators.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://data.worldbank.org/" target="_blank">World Bank Open Data</a></h4>
+                    <div class="resource-url"><a href="https://data.worldbank.org/" target="_blank">https://data.worldbank.org/</a></div>
+                    <p class="resource-description">Free access to global development data including Health, Nutrition and Population Statistics with time series spanning decades for 200+ countries.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://data.unicef.org/" target="_blank">UNICEF Data</a></h4>
+                    <div class="resource-url"><a href="https://data.unicef.org/" target="_blank">https://data.unicef.org/</a></div>
+                    <p class="resource-description">Child-focused health and development statistics including immunization coverage, child mortality, nutrition, and maternal health indicators.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- US Federal Sources -->
+    <section class="category-section">
+        <div class="section-header">
+            <h2>United States Federal Sources</h2>
+            <p>Official US government health surveillance systems and research databases</p>
+        </div>
+        
+        <div class="category-grid">
+            <div class="category-card" data-category="us-federal">
+                <h3 class="category-title">
+                    <span class="category-icon">🏥</span>
+                    Centers for Disease Control and Prevention (CDC)
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://wonder.cdc.gov/" target="_blank">CDC WONDER</a></h4>
+                    <div class="resource-url"><a href="https://wonder.cdc.gov/" target="_blank">https://wonder.cdc.gov/</a></div>
+                    <p class="resource-description">Wide-ranging OnLine Data for Epidemiologic Research - public-use database providing mortality, natality, cancer, vaccination, and population data with custom query capabilities.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.cdc.gov/flu/weekly/" target="_blank">FluView</a></h4>
+                    <div class="resource-url"><a href="https://www.cdc.gov/flu/weekly/" target="_blank">https://www.cdc.gov/flu/weekly/</a></div>
+                    <p class="resource-description">Weekly influenza surveillance reports including ILI activity, laboratory data, hospitalization rates, and mortality statistics.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.cdc.gov/nndss/" target="_blank">NNDSS</a></h4>
+                    <div class="resource-url"><a href="https://www.cdc.gov/nndss/" target="_blank">https://www.cdc.gov/nndss/</a></div>
+                    <p class="resource-description">National Notifiable Diseases Surveillance System for 120+ infectious diseases reported by state and territorial health departments.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.cdc.gov/nchs/nhanes/" target="_blank">NHANES</a></h4>
+                    <div class="resource-url"><a href="https://www.cdc.gov/nchs/nhanes/" target="_blank">https://www.cdc.gov/nchs/nhanes/</a></div>
+                    <p class="resource-description">National Health and Nutrition Examination Survey combining interviews, physical examinations, and laboratory tests to assess health and nutritional status.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.cdc.gov/brfss/" target="_blank">BRFSS</a></h4>
+                    <div class="resource-url"><a href="https://www.cdc.gov/brfss/" target="_blank">https://www.cdc.gov/brfss/</a></div>
+                    <p class="resource-description">Behavioral Risk Factor Surveillance System - world's largest ongoing telephone health survey tracking health conditions and risk behaviors.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://covid.cdc.gov/covid-data-tracker/" target="_blank">COVID Data Tracker</a></h4>
+                    <div class="resource-url"><a href="https://covid.cdc.gov/covid-data-tracker/" target="_blank">https://covid.cdc.gov/covid-data-tracker/</a></div>
+                    <p class="resource-description">Real-time COVID-19 data including cases, deaths, hospitalizations, vaccinations, and variants with county-level granularity.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="us-federal">
+                <h3 class="category-title">
+                    <span class="category-icon">🔬</span>
+                    National Institutes of Health (NIH)
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://clinicaltrials.gov/" target="_blank">ClinicalTrials.gov</a></h4>
+                    <div class="resource-url"><a href="https://clinicaltrials.gov/" target="_blank">https://clinicaltrials.gov/</a></div>
+                    <p class="resource-description">Registry and results database of 450,000+ clinical studies worldwide including trial protocols, eligibility criteria, and results.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank">PubMed/MEDLINE</a></h4>
+                    <div class="resource-url"><a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/</a></div>
+                    <p class="resource-description">Database of 35+ million citations for biomedical literature from MEDLINE, life science journals, and online books.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.ncbi.nlm.nih.gov/gap/" target="_blank">dbGaP</a></h4>
+                    <div class="resource-url"><a href="https://www.ncbi.nlm.nih.gov/gap/" target="_blank">https://www.ncbi.nlm.nih.gov/gap/</a></div>
+                    <p class="resource-description">Database of Genotypes and Phenotypes - archive of individual-level phenotype, exposure, genotype, and sequence data from research studies.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://allofus.nih.gov/" target="_blank">All of Us Research Program</a></h4>
+                    <div class="resource-url"><a href="https://allofus.nih.gov/" target="_blank">https://allofus.nih.gov/</a></div>
+                    <p class="resource-description">Precision medicine initiative collecting health data from 1+ million participants including genomics, electronic health records, and surveys.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disease-Specific Platforms -->
+    <section class="category-section">
+        <div class="section-header">
+            <h2>Disease-Specific Platforms</h2>
+            <p>Specialized databases for major infectious and chronic diseases</p>
+        </div>
+        
+        <div class="category-grid">
+            <div class="category-card" data-category="disease">
+                <h3 class="category-title">
+                    <span class="category-icon">🦠</span>
+                    COVID-19
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://github.com/CSSEGISandData/COVID-19" target="_blank">Johns Hopkins CSSE COVID-19 Data</a></h4>
+                    <div class="resource-url"><a href="https://github.com/CSSEGISandData/COVID-19" target="_blank">https://github.com/CSSEGISandData/COVID-19</a></div>
+                    <p class="resource-description">Most widely used COVID-19 dataset globally with daily time series of confirmed cases, deaths, and recoveries at county/province level.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://ourworldindata.org/coronavirus" target="_blank">Our World in Data COVID-19</a></h4>
+                    <div class="resource-url"><a href="https://ourworldindata.org/coronavirus" target="_blank">https://ourworldindata.org/coronavirus</a></div>
+                    <p class="resource-description">Comprehensive COVID-19 statistics including testing, vaccinations, hospitalizations with excellent visualizations and downloadable data.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://global.health/" target="_blank">Global.health</a></h4>
+                    <div class="resource-url"><a href="https://global.health/" target="_blank">https://global.health/</a></div>
+                    <p class="resource-description">Open access platform for individual-level epidemiological line-list data on COVID-19 cases with demographic and geographic details.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="disease">
+                <h3 class="category-title">
+                    <span class="category-icon">🌡️</span>
+                    Influenza
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.who.int/tools/flunet" target="_blank">FluNet (WHO)</a></h4>
+                    <div class="resource-url"><a href="https://www.who.int/tools/flunet" target="_blank">https://www.who.int/tools/flunet</a></div>
+                    <p class="resource-description">Global web-based tool for influenza virological surveillance providing data on influenza virus detections by subtype from national laboratories.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.fludb.org/" target="_blank">Influenza Research Database</a></h4>
+                    <div class="resource-url"><a href="https://www.fludb.org/" target="_blank">https://www.fludb.org/</a></div>
+                    <p class="resource-description">Resource integrating genomic, protein sequence, surveillance, and clinical data for influenza viruses with analytical tools.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="disease">
+                <h3 class="category-title">
+                    <span class="category-icon">🦟</span>
+                    Malaria
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://malariaatlas.org/" target="_blank">Malaria Atlas Project</a></h4>
+                    <div class="resource-url"><a href="https://malariaatlas.org/" target="_blank">https://malariaatlas.org/</a></div>
+                    <p class="resource-description">Spatial database of malaria prevalence, incidence, intervention coverage, and vector occurrence with geospatial modeling outputs.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="disease">
+                <h3 class="category-title">
+                    <span class="category-icon">🎗️</span>
+                    Cancer
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://seer.cancer.gov/" target="_blank">SEER</a></h4>
+                    <div class="resource-url"><a href="https://seer.cancer.gov/" target="_blank">https://seer.cancer.gov/</a></div>
+                    <p class="resource-description">Surveillance, Epidemiology, and End Results program providing cancer statistics covering 48% of US population with incidence, survival, and prevalence data.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://gco.iarc.fr/" target="_blank">GLOBOCAN</a></h4>
+                    <div class="resource-url"><a href="https://gco.iarc.fr/" target="_blank">https://gco.iarc.fr/</a></div>
+                    <p class="resource-description">International Agency for Research on Cancer database estimating cancer incidence, mortality, and prevalence for 36 cancer types in 185 countries.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-Time Surveillance -->
+    <section class="category-section">
+        <div class="section-header">
+            <h2>Real-Time Surveillance & Participatory Platforms</h2>
+            <p>Digital epidemiology and citizen science platforms for disease monitoring</p>
+        </div>
+        
+        <div class="category-grid">
+            <div class="category-card" data-category="surveillance">
+                <h3 class="category-title">
+                    <span class="category-icon">🚨</span>
+                    Outbreak Detection & Monitoring
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://promedmail.org/" target="_blank">ProMED</a></h4>
+                    <div class="resource-url"><a href="https://promedmail.org/" target="_blank">https://promedmail.org/</a></div>
+                    <p class="resource-description">Program for Monitoring Emerging Diseases - internet-based reporting system providing real-time alerts for disease outbreaks globally.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.healthmap.org/" target="_blank">HealthMap</a></h4>
+                    <div class="resource-url"><a href="https://www.healthmap.org/" target="_blank">https://www.healthmap.org/</a></div>
+                    <p class="resource-description">Real-time disease outbreak monitoring system using informal sources (news, social media) to detect and visualize emerging health threats.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.who.int/initiatives/eios" target="_blank">EIOS</a></h4>
+                    <div class="resource-url"><a href="https://www.who.int/initiatives/eios" target="_blank">https://www.who.int/initiatives/eios</a></div>
+                    <p class="resource-description">WHO's Epidemic Intelligence from Open Sources - AI-powered early warning system monitoring open sources for disease outbreak signals.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="surveillance">
+                <h3 class="category-title">
+                    <span class="category-icon">👥</span>
+                    Participatory Surveillance
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.globalfluview.org/" target="_blank">Global Flu View</a></h4>
+                    <div class="resource-url"><a href="https://www.globalfluview.org/" target="_blank">https://www.globalfluview.org/</a></div>
+                    <p class="resource-description">International participatory surveillance platform handling over 22 million data points from 11 countries. Enables real-time monitoring of influenza-like illness through volunteer self-reporting, providing early detection signals for seasonal and pandemic influenza activity.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.flunearyou.org/" target="_blank">Flu Near You</a></h4>
+                    <div class="resource-url"><a href="https://www.flunearyou.org/" target="_blank">https://www.flunearyou.org/</a></div>
+                    <p class="resource-description">Participatory surveillance platform where volunteers report flu-like symptoms weekly, providing early detection signals for influenza activity in the United States.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.influenzanet.eu/" target="_blank">Influenzanet</a></h4>
+                    <div class="resource-url"><a href="https://www.influenzanet.eu/" target="_blank">https://www.influenzanet.eu/</a></div>
+                    <p class="resource-description">European participatory surveillance network monitoring ILI through volunteer self-reports across 10+ countries.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Aggregators -->
+    <section class="category-section">
+        <div class="section-header">
+            <h2>Data Aggregators & Research Platforms</h2>
+            <p>Meta-repositories and comprehensive data catalogs</p>
+        </div>
+        
+        <div class="category-grid">
+            <div class="category-card" data-category="global">
+                <h3 class="category-title">
+                    <span class="category-icon">📊</span>
+                    Major Data Catalogs
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="http://ghdx.healthdata.org/" target="_blank">Global Health Data Exchange (GHDx)</a></h4>
+                    <div class="resource-url"><a href="http://ghdx.healthdata.org/" target="_blank">http://ghdx.healthdata.org/</a></div>
+                    <p class="resource-description">IHME's comprehensive catalog of surveys, censuses, vital statistics, and other health-related data with 10,000+ data sources.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://vizhub.healthdata.org/gbd-results/" target="_blank">GBD Results Tool</a></h4>
+                    <div class="resource-url"><a href="https://vizhub.healthdata.org/gbd-results/" target="_blank">https://vizhub.healthdata.org/gbd-results/</a></div>
+                    <p class="resource-description">Interactive visualization of Global Burden of Disease estimates for 369 diseases across 204 countries from 1990-present.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://ourworldindata.org/" target="_blank">Our World in Data</a></h4>
+                    <div class="resource-url"><a href="https://ourworldindata.org/" target="_blank">https://ourworldindata.org/</a></div>
+                    <p class="resource-description">Research platform publishing data and visualizations on global problems including health, poverty, climate change with all data downloadable.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://healthdata.gov/" target="_blank">HealthData.gov</a></h4>
+                    <div class="resource-url"><a href="https://healthdata.gov/" target="_blank">https://healthdata.gov/</a></div>
+                    <p class="resource-description">US government's health data catalog with 3,000+ datasets from federal agencies including claims, quality measures, and research data.</p>
+                </div>
+            </div>
+
+            <div class="category-card" data-category="global">
+                <h3 class="category-title">
+                    <span class="category-icon">🔬</span>
+                    Research Data Repositories
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://datadryad.org/" target="_blank">Dryad</a></h4>
+                    <div class="resource-url"><a href="https://datadryad.org/" target="_blank">https://datadryad.org/</a></div>
+                    <p class="resource-description">General-purpose data repository making research data discoverable, freely reusable, and citable with DOI assignment.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://zenodo.org/" target="_blank">Zenodo</a></h4>
+                    <div class="resource-url"><a href="https://zenodo.org/" target="_blank">https://zenodo.org/</a></div>
+                    <p class="resource-description">CERN-operated open science repository for datasets, software, publications across all disciplines with GitHub integration.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://figshare.com/" target="_blank">Figshare</a></h4>
+                    <div class="resource-url"><a href="https://figshare.com/" target="_blank">https://figshare.com/</a></div>
+                    <p class="resource-description">Repository for research outputs including datasets, figures, and presentations with DOI assignment and versioning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Genomic Data -->
+    <section class="category-section">
+        <div class="section-header">
+            <h2>Genomic & Molecular Data</h2>
+            <p>Sequence databases and pathogen genomics platforms</p>
+        </div>
+        
+        <div class="category-grid">
+            <div class="category-card" data-category="genomic">
+                <h3 class="category-title">
+                    <span class="category-icon">🧬</span>
+                    Sequence Databases
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.gisaid.org/" target="_blank">GISAID</a></h4>
+                    <div class="resource-url"><a href="https://www.gisaid.org/" target="_blank">https://www.gisaid.org/</a></div>
+                    <p class="resource-description">Global Initiative on Sharing Avian Influenza Data - primary platform for sharing influenza and coronavirus genomic sequences with 15+ million SARS-CoV-2 genomes.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.ncbi.nlm.nih.gov/genbank/" target="_blank">GenBank</a></h4>
+                    <div class="resource-url"><a href="https://www.ncbi.nlm.nih.gov/genbank/" target="_blank">https://www.ncbi.nlm.nih.gov/genbank/</a></div>
+                    <p class="resource-description">NIH genetic sequence database containing publicly available DNA sequences for 420,000+ organisms.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.ebi.ac.uk/ena/" target="_blank">European Nucleotide Archive</a></h4>
+                    <div class="resource-url"><a href="https://www.ebi.ac.uk/ena/" target="_blank">https://www.ebi.ac.uk/ena/</a></div>
+                    <p class="resource-description">Comprehensive record of nucleotide sequencing information including raw reads, alignments, and assemblies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APIs Section -->
+    <section class="category-section">
+        <div class="section-header">
+            <h2>APIs & Programmatic Access</h2>
+            <p>Direct API access for automated data retrieval and analysis</p>
+        </div>
+        
+        <div class="category-grid">
+            <div class="category-card" data-category="api">
+                <h3 class="category-title">
+                    <span class="category-icon">⚡</span>
+                    Key APIs
+                </h3>
+                
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://www.who.int/data/gho/info/gho-odata-api" target="_blank">WHO GHO OData API</a></h4>
+                    <div class="resource-url"><a href="https://www.who.int/data/gho/info/gho-odata-api" target="_blank">https://www.who.int/data/gho/info/gho-odata-api</a></div>
+                    <p class="resource-description">OData protocol API for accessing WHO Global Health Observatory indicators programmatically with query filtering.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://data.cdc.gov/browse?limitTo=apis" target="_blank">CDC APIs</a></h4>
+                    <div class="resource-url"><a href="https://data.cdc.gov/browse?limitTo=apis" target="_blank">https://data.cdc.gov/browse?limitTo=apis</a></div>
+                    <p class="resource-description">Collection of APIs for accessing CDC datasets including chronic disease, injury, and infectious disease data.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://github.com/owid/" target="_blank">Our World in Data GitHub</a></h4>
+                    <div class="resource-url"><a href="https://github.com/owid/" target="_blank">https://github.com/owid/</a></div>
+                    <p class="resource-description">GitHub repository with all Our World in Data datasets in CSV format, updated regularly.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://disease.sh/" target="_blank">disease.sh - COVID-19 API</a></h4>
+                    <div class="resource-url"><a href="https://disease.sh/" target="_blank">https://disease.sh/</a></div>
+                    <p class="resource-description">Open API providing real-time COVID-19 statistics from Johns Hopkins CSSE aggregated at country, state, and county levels.</p>
+                </div>
+
+                <div class="resource-item">
+                    <h4 class="resource-title"><a href="https://open.fda.gov/apis/" target="_blank">openFDA</a></h4>
+                    <div class="resource-url"><a href="https://open.fda.gov/apis/" target="_blank">https://open.fda.gov/apis/</a></div>
+                    <p class="resource-description">API providing access to FDA public data on adverse events, recalls, drug labels, and enforcement actions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- No Results Message -->
+    <div class="no-results" id="noResults">
+        <div class="no-results-icon">🔍</div>
+        <h3>No Results Found</h3>
+        <p>Try adjusting your search terms or filters</p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">PUBLIC HEALTH DATA CATALOG</div>
+            <p class="footer-text">GHI 463/563 - Foundations of Public Health Applications of Artificial Intelligence</p>
+            <p class="footer-text">Mel and Enid Zuckerman College of Public Health</p>
+            <p class="footer-text">University of Arizona</p>
+            <p class="footer-text" style="margin-top: 2rem;">Instructor: Onicio B Leal Neto, PhD</p>
+            <p class="footer-text" style="margin-top: 1rem; font-size: 0.9rem;">Last Updated: January 2026</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Active filters array
+        let activeFilters = [];
+        let searchTerm = '';
+
+        // Create floating particles
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+
+        searchInput.addEventListener('input', function(e) {
+            searchTerm = e.target.value.toLowerCase();
+            
+            // Show/hide clear button
+            if (searchTerm.length > 0) {
+                clearSearchBtn.classList.add('visible');
+            } else {
+                clearSearchBtn.classList.remove('visible');
+            }
+            
+            performFilter();
+        });
+
+        function clearSearch() {
+            searchInput.value = '';
+            searchTerm = '';
+            clearSearchBtn.classList.remove('visible');
+            performFilter();
+        }
+
+        // Filter functionality
+        function toggleFilter(element) {
+            const filterValue = element.dataset.filter;
+            
+            if (element.classList.contains('active')) {
+                // Remove filter
+                element.classList.remove('active');
+                activeFilters = activeFilters.filter(f => f !== filterValue);
+            } else {
+                // Add filter
+                element.classList.add('active');
+                activeFilters.push(filterValue);
+            }
+            
+            performFilter();
+        }
+
+        function clearFilters() {
+            // Clear all filter chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            activeFilters = [];
+            performFilter();
+        }
+
+        // Main filter function
+        function performFilter() {
+            const categoryCards = document.querySelectorAll('.category-card');
+            const resourceItems = document.querySelectorAll('.resource-item');
+            let visibleCount = 0;
+            let visibleCards = 0;
+
+            // Filter category cards
+            categoryCards.forEach(card => {
+                const category = card.dataset.category;
+                const cardText = card.textContent.toLowerCase();
+                
+                // Check category filter
+                const matchesCategory = activeFilters.length === 0 || activeFilters.includes(category);
+                
+                // Check search term
+                const matchesSearch = searchTerm === '' || cardText.includes(searchTerm);
+                
+                if (matchesCategory && matchesSearch) {
+                    card.classList.remove('hidden');
+                    visibleCards++;
+                    
+                    // Count visible resources within this card
+                    const resources = card.querySelectorAll('.resource-item');
+                    resources.forEach(resource => {
+                        const resourceText = resource.textContent.toLowerCase();
+                        if (searchTerm === '' || resourceText.includes(searchTerm)) {
+                            resource.classList.remove('hidden');
+                            visibleCount++;
+                        } else {
+                            resource.classList.add('hidden');
+                        }
+                    });
+                    
+                    // If search filtered out all resources, hide the card
+                    if (searchTerm !== '' && card.querySelectorAll('.resource-item:not(.hidden)').length === 0) {
+                        card.classList.add('hidden');
+                        visibleCards--;
+                    }
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Update results count
+            updateResultsCount(visibleCount > 0 ? visibleCount : visibleCards);
+            
+            // Show/hide no results message
+            const noResults = document.getElementById('noResults');
+            if (visibleCards === 0) {
+                noResults.classList.add('visible');
+            } else {
+                noResults.classList.remove('visible');
+            }
+        }
+
+        function updateResultsCount(count) {
+            const resultsCount = document.getElementById('resultsCount');
+            resultsCount.textContent = count;
+        }
+
+        // Scroll progress bar
+        function updateScrollProgress() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (window.pageYOffset / scrollHeight) * 100;
+            scrollProgress.style.width = scrolled + '%';
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and headers
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            
+            document.querySelectorAll('.stat-card, .category-card, .section-header h2').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Count initial resources
+            const totalResources = document.querySelectorAll('.resource-item').length;
+            updateResultsCount(totalResources);
+        });
+
+        // Back to top button
+        window.addEventListener('scroll', () => {
+            updateScrollProgress();
+            
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
